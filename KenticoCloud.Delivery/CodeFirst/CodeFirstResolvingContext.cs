@@ -12,9 +12,6 @@ namespace KenticoCloud.Delivery
         /// </summary>
         public Func<string, object> GetLinkedItem { get; internal set; }
 
-        /// <summary>
-        /// Gets the Delivery client used for retrieving the data
-        /// </summary>
-        public IDeliveryClient Client { get; internal set; }
+        public IContentLinkUrlResolver ContentLinkUrlResolver { get; internal set; }
     }
 }
