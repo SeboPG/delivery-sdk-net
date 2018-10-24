@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using KenticoCloud.Delivery.CodeFirst;
+﻿using KenticoCloud.Delivery.CodeFirst;
 using KenticoCloud.Delivery.ContentLinks;
 using Xunit;
 
-namespace KenticoCloud.Delivery.Tests.DIFrameworks
+namespace KenticoCloud.Delivery.Tests.DependencyInjectionFrameworks
 {
     internal static class DeliveryClientAssertionExtensions
     {

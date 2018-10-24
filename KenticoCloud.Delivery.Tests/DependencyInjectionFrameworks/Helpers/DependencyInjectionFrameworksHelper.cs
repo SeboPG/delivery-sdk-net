@@ -1,15 +1,16 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Castle.Windsor;
 using Castle.Windsor.MsDependencyInjection;
+using KenticoCloud.Delivery.Tests.DIFrameworks.Helpers;
+using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using Unity;
 using Unity.Microsoft.DependencyInjection;
 
-namespace KenticoCloud.Delivery.Tests.DIFrameworks.Helpers
+namespace KenticoCloud.Delivery.Tests.DependencyInjectionFrameworks.Helpers
 {
     internal static class DependencyInjectionFrameworksHelper
     {
@@ -50,14 +51,19 @@ namespace KenticoCloud.Delivery.Tests.DIFrameworks.Helpers
         internal static Container CreateAndConfigureSimpleInjectorContainer()
         {
             var serviceCollection = GetServiceCollection();
-            var container = new Container();
+            var container = new Container
+            {
+                Options =
+                {
+                    DefaultScopedLifestyle = new AsyncScopedLifestyle()
+                }
+            };
 
             var appBuilder = new FakeApplicationBuilder
             {
                 ApplicationServices = serviceCollection.BuildServiceProvider()
             };
 
-            container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
             serviceCollection.EnableSimpleInjectorCrossWiring(container);
             serviceCollection.UseSimpleInjectorAspNetRequestScoping(container);
             container.AutoCrossWireAspNetComponents(appBuilder);

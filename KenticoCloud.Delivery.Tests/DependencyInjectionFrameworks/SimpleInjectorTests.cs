@@ -1,7 +1,8 @@
-﻿using KenticoCloud.Delivery.Tests.DIFrameworks.Helpers;
+﻿using KenticoCloud.Delivery.Tests.DependencyInjectionFrameworks.Helpers;
+using KenticoCloud.Delivery.Tests.DIFrameworks.Helpers;
 using Xunit;
 
-namespace KenticoCloud.Delivery.Tests.DIFrameworks
+namespace KenticoCloud.Delivery.Tests.DependencyInjectionFrameworks
 {
     public class SimpleInjectorTests
     {

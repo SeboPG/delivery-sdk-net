@@ -1,8 +1,9 @@
-﻿using KenticoCloud.Delivery.Tests.DIFrameworks.Helpers;
+﻿using KenticoCloud.Delivery.Tests.DependencyInjectionFrameworks.Helpers;
+using KenticoCloud.Delivery.Tests.DIFrameworks.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace KenticoCloud.Delivery.Tests.DIFrameworks
+namespace KenticoCloud.Delivery.Tests.DependencyInjectionFrameworks
 {
     public class AutoFacTests
     {
