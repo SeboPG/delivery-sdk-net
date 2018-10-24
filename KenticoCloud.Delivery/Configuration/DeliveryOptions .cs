@@ -25,7 +25,11 @@
         /// </summary>
         public string PreviewApiKey { get; set; }
 
-        // this property enables user to have preview API key set and not use it
+        /// <remarks>
+        /// This property enables quick toggling between production and preview configuration even with <see cref="PreviewApiKey"/> set.
+        /// It can be used for debugging and verification of unpublished content in time-critical scenarios, however, we recommend
+        /// working with only either the production or preview Delivery API, not both, within a single project.
+        /// </remarks>
         /// <summary>
         /// Gets or sets whether the Preview API should be used. If TRUE, <see cref="PreviewApiKey"/> needs to be set as well.
         /// </summary>

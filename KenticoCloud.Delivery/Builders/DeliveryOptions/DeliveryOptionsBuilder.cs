@@ -14,7 +14,7 @@ namespace KenticoCloud.Delivery
 
         IOptionsPreviewOrProductionSteps IOptionsMandatorySteps.WithProjectId(string projectId)
         {
-            OptionsValidator.ValidateProjectId(projectId);
+            DeliveryOptionsValidator.ValidateProjectId(projectId);
             _deliveryOptions.ProjectId = projectId;
 
             return this;
@@ -22,7 +22,7 @@ namespace KenticoCloud.Delivery
 
         IOptionsPreviewOrProductionSteps IOptionsMandatorySteps.WithProjectId(Guid projectId)
         {
-            OptionsValidator.ValidateProjectId(projectId);
+            DeliveryOptionsValidator.ValidateProjectId(projectId);
             _deliveryOptions.ProjectId = projectId.ToString();
 
             return this;
@@ -50,7 +50,7 @@ namespace KenticoCloud.Delivery
 
         IOptionsSteps IOptionsSteps.WithMaxRetryAttempts(int attempts)
         {
-            OptionsValidator.ValidateMaxRetryAttempts(attempts);
+            DeliveryOptionsValidator.ValidateMaxRetryAttempts(attempts);
             _deliveryOptions.MaxRetryAttempts = attempts;
 
             return this;

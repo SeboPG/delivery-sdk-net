@@ -12,7 +12,9 @@ namespace KenticoCloud.Delivery.Tests
         private const string PreviewEndpoint = "https://preview-deliver.test.com/{0}";
         private const string PreviewApiKey =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI3YjJlM2FiOTBjOGM0ODVmYjdmZTczNWY0ZGM1NDIyMCIsImlhdCI6IjE1Mjg4ODc2MzQiLCJleHAiOiIxODc0NDg3NjM0IiwicHJvamVjd" +
-            "F9pZCI6IjEyMzQ1Njc5OGFiY2RibGFibGEiLCJ2ZXIiOiIxLjAuMCIsImF1ZCI6InByZXZpZXcuZGVsaXZlci5rZW50aWNvY2xvdWQuY29tIn0=.wtSzbNDpbEHR2Bj4LUTGsdgesg4b693TFuhRCRsDyoc";
+            "F9pZCI6IjEyMzQ1Njc5OGFiY2RibGFibGEiLCJ2ZXIiOiIxLjAuMCIsImF1ZCI6InByZXZpZXcuZGVsaXZlci5rZW50aWNvY2xvdWQuY29tIn0.wtSzbNDpbEHR2Bj4LUTGsdgesg4b693TFuhRCRsDyoc";
+
+        private readonly Guid _guid = new Guid(ProjectId);
         
         [Fact]
         public void BuildClWithProjectId_ReturnsDeliveryClientWithProjectIdSet()
@@ -60,6 +62,22 @@ namespace KenticoCloud.Delivery.Tests
             Assert.Equal(mockCodeFirstPropertyMapper, deliveryClient.CodeFirstPropertyMapper);
             Assert.Equal(mockResiliencePolicyProvider, deliveryClient.ResiliencePolicyProvider);
             Assert.Equal(mockHttp, deliveryClient.HttpClient);
+        }
+
+        [Fact]
+        public void BuildWithoutOptionalStepts_ReturnsDeliveryClientWithDefaultImplementations()
+        {
+            var deliveryClient = (DeliveryClient) DeliveryClientBuilder
+                .WithProjectId(_guid)
+                .Build();
+
+            Assert.NotNull(deliveryClient.CodeFirstModelProvider);
+            Assert.NotNull(deliveryClient.CodeFirstPropertyMapper);
+            Assert.NotNull(deliveryClient.CodeFirstTypeProvider);
+            Assert.NotNull(deliveryClient.ContentLinkUrlResolver);
+            Assert.NotNull(deliveryClient.HttpClient);
+            Assert.NotNull(deliveryClient.InlineContentItemsProcessor);
+            Assert.NotNull(deliveryClient.ResiliencePolicyProvider);
         }
     }
 }

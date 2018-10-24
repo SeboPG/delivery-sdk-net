@@ -3,8 +3,10 @@ using System.Text.RegularExpressions;
 
 namespace KenticoCloud.Delivery
 {
-    public static class OptionsValidator
+    public static class DeliveryOptionsValidator
     {
+        public static Lazy<Regex> ApiKeyRegex = new Lazy<Regex>(() => new Regex(@"[A-Za-z0-9+/]+\.[A-Za-z0-9+/]+\.[A-Za-z0-9+/]+", RegexOptions.Compiled));
+
         public static void Validate(this DeliveryOptions deliveryOptions)
         {
             ValidateMaxRetryAttempts(deliveryOptions.MaxRetryAttempts);
@@ -49,7 +51,7 @@ namespace KenticoCloud.Delivery
         {
             IsEmptyOrNull(apiKey, parameterName);
 
-            if (!Regex.IsMatch(apiKey, "[A-Za-z0-9+/]+.[A-Za-z0-9+/]+.[A-Za-z0-9+/]+"))
+            if (!ApiKeyRegex.Value.IsMatch(apiKey))
             {
                 throw new ArgumentException(parameterName, $"Parameter {parameterName} has invalid format.");
             }
@@ -101,7 +103,10 @@ namespace KenticoCloud.Delivery
         {
             IsEmptyOrNull(customEndpoint, nameof(customEndpoint));
 
-            if (!Uri.TryCreate(customEndpoint, UriKind.Absolute, out var uriResult) || (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps))
+            var canCreateUri = !Uri.TryCreate(customEndpoint, UriKind.Absolute, out var uriResult);
+            var hasCorrectUriScheme = uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps;
+
+            if (canCreateUri || hasCorrectUriScheme)
             {
                 throw new ArgumentException(nameof(customEndpoint), $"Parameter {nameof(customEndpoint)} has invalid format.");
             }
