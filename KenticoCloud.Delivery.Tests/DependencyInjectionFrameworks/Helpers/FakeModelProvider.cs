@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json.Linq;
 
-namespace KenticoCloud.Delivery.Tests.DIFrameworks.Helpers
+namespace KenticoCloud.Delivery.Tests.DependencyInjectionFrameworks.Helpers
 {
     internal class FakeModelProvider : ICodeFirstModelProvider
     {

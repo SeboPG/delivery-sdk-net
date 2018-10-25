@@ -24,6 +24,9 @@ namespace KenticoCloud.Delivery.Builders.DeliveryClient
         IDeliveryClientOptionalSteps BuildWithProjectId(string projectId);
         IDeliveryClientOptionalSteps BuildWithProjectId(Guid projectId);
         IDeliveryClientOptionalSteps BuildWithDeliveryOptions(BuildDeliveryOptions buildDeliveryOptions);
+        IDeliveryClient BuildWithProjectIdOnly(string projectId);
+        IDeliveryClient BuildWithProjectIdOnly(Guid projectId);
+        IDeliveryClient BuildWithDeliveryOptionsOnly(BuildDeliveryOptions buildDeliveryOptions);
     }
 
     /// <inheritdoc />

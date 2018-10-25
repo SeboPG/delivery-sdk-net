@@ -71,7 +71,6 @@ namespace KenticoCloud.Delivery
 
         private static IServiceCollection LoadOptionsConfiguration(this IServiceCollection services, IConfiguration configuration, string configurationSectionName)
             => services
-                .AddOptions()
                 .Configure<DeliveryOptions>(configurationSectionName == null 
                     ? configuration
                     : configuration.GetSection(configurationSectionName));

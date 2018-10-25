@@ -40,7 +40,9 @@
         /// </summary>
         public bool WaitForLoadingNewContent { get; set; }
 
-        // this property enables user to have secured production API key set and not use it
+        /// <remarks>
+        /// This property enables quick toggling between production and secured production configuration even with <see cref="SecuredProductionApiKey"/> set.
+        /// </remarks>
         /// <summary>
         /// Gets or sets whether the production Delivery API will be accessed using an API key.
         /// </summary>

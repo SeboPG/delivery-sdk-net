@@ -1,5 +1,5 @@
 ﻿using KenticoCloud.Delivery.Tests.DependencyInjectionFrameworks.Helpers;
-using KenticoCloud.Delivery.Tests.DIFrameworks.Helpers;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace KenticoCloud.Delivery.Tests.DependencyInjectionFrameworks
@@ -9,7 +9,9 @@ namespace KenticoCloud.Delivery.Tests.DependencyInjectionFrameworks
         [Fact]
         public void DeliveryClientIsSuccessfullyResolvedFromSimpleInjectorContainer()
         {
-            var container = DependencyInjectionFrameworksHelper.CreateAndConfigureSimpleInjectorContainer();
+            var container = DependencyInjectionFrameworksHelper
+                .GetServiceCollection()
+                .BuildSimpleInjectorServiceProvider();
 
             var client = (DeliveryClient) container.GetInstance<IDeliveryClient>();
 
@@ -20,12 +22,26 @@ namespace KenticoCloud.Delivery.Tests.DependencyInjectionFrameworks
         public void DeliveryClientIsSuccessfullyResolvedFromSimpleInjectorContainer_CustomCodeFirstModelProvider()
         {
             var container = DependencyInjectionFrameworksHelper
-                .CreateAndConfigureSimpleInjectorContainerWithCustomModelProvider();
-            container.Register<ICodeFirstModelProvider, FakeModelProvider>();
+                .GetServiceCollection()
+                .AddScoped<ICodeFirstModelProvider, FakeModelProvider>()
+                .BuildSimpleInjectorServiceProvider();
 
             var client = (DeliveryClient) container.GetInstance<IDeliveryClient>();
 
             client.AssertDefaultDependenciesWithCustomCodeFirstModelProvider<FakeModelProvider>();
+        }
+
+        [Fact]
+        public void FakeModelProviderIsSuccessfullyResolvedAfterCrossWireWithServiceCollection()
+        {
+            var container = DependencyInjectionFrameworksHelper
+                .GetServiceCollection()
+                .BuildSimpleInjectorServiceProvider();
+            container.Register<ICodeFirstModelProvider, FakeModelProvider>();
+
+            var resolvedService = container.GetService<ICodeFirstModelProvider>();
+
+            Assert.IsType<FakeModelProvider>(resolvedService);
         }
     }
 }

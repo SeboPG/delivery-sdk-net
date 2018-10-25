@@ -3,7 +3,6 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Castle.Windsor;
 using Castle.Windsor.MsDependencyInjection;
-using KenticoCloud.Delivery.Tests.DIFrameworks.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
@@ -48,9 +47,8 @@ namespace KenticoCloud.Delivery.Tests.DependencyInjectionFrameworks.Helpers
             return serviceCollection.BuildServiceProvider(unityContainer);
         }
 
-        internal static Container CreateAndConfigureSimpleInjectorContainer()
+        internal static Container BuildSimpleInjectorServiceProvider(this IServiceCollection serviceCollection)
         {
-            var serviceCollection = GetServiceCollection();
             var container = new Container
             {
                 Options =
@@ -64,25 +62,6 @@ namespace KenticoCloud.Delivery.Tests.DependencyInjectionFrameworks.Helpers
                 ApplicationServices = serviceCollection.BuildServiceProvider()
             };
 
-            serviceCollection.EnableSimpleInjectorCrossWiring(container);
-            serviceCollection.UseSimpleInjectorAspNetRequestScoping(container);
-            container.AutoCrossWireAspNetComponents(appBuilder);
-
-            return container;
-        }
-
-        internal static Container CreateAndConfigureSimpleInjectorContainerWithCustomModelProvider()
-        {
-            var serviceCollection = GetServiceCollection();
-            serviceCollection.AddScoped<ICodeFirstModelProvider, FakeModelProvider>();
-            var container = new Container();
-
-            var appBuilder = new FakeApplicationBuilder
-            {
-                ApplicationServices = serviceCollection.BuildServiceProvider()
-            };
-
-            container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
             serviceCollection.EnableSimpleInjectorCrossWiring(container);
             serviceCollection.UseSimpleInjectorAspNetRequestScoping(container);
             container.AutoCrossWireAspNetComponents(appBuilder);

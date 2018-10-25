@@ -3,13 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace KenticoCloud.Delivery.Tests.Extensions
 {
     internal class FakeServiceCollection : IServiceCollection
     {
-        internal Dictionary<Type, ImplementationAndLifetime> Dependencies =
-            new Dictionary<Type, ImplementationAndLifetime>();
+        internal Dictionary<Type, Type> Dependencies =
+            new Dictionary<Type, Type>();
+
+        internal string ProjectId;
 
         public IEnumerator<ServiceDescriptor> GetEnumerator()
             => Enumerable.Empty<ServiceDescriptor>().GetEnumerator();
@@ -21,7 +24,21 @@ namespace KenticoCloud.Delivery.Tests.Extensions
 
         public void Add(ServiceDescriptor item)
         {
-            Dependencies.Add(item.ServiceType, new ImplementationAndLifetime{Implementation = item.ImplementationType, Lifetime = item.Lifetime});
+            if (item.ServiceType == typeof(IOptions<DeliveryOptions>))
+            {
+                var options = (IOptions<DeliveryOptions>) item.ImplementationInstance;
+                ProjectId = options.Value.ProjectId;
+            }
+
+            if (item.ServiceType == typeof(IConfigureOptions<DeliveryOptions>))
+            {
+                var options = new DeliveryOptions();
+                var configureOptions = (IConfigureOptions<DeliveryOptions>)item.ImplementationInstance;
+                configureOptions.Configure(options);
+                ProjectId = options.ProjectId;
+            }
+
+            Dependencies.Add(item.ServiceType, item.ImplementationType);
         }
 
         public void Clear()
@@ -66,20 +83,5 @@ namespace KenticoCloud.Delivery.Tests.Extensions
             get => throw new NotImplementedException();
             set => throw new NotImplementedException();
         }
-    }
-
-    internal struct ImplementationAndLifetime
-    {
-        internal object Implementation;
-        internal ServiceLifetime Lifetime;
-    }
-
-    internal static class FakeServiceCollectionExtensions
-    {
-        public static void TryAddSingleton(this FakeServiceCollection serviceCollection, object implementation) 
-            => serviceCollection.TryAddSingleton(implementation);
-
-        public static void TryAddSingleton<TType, TImplementation>(this FakeServiceCollection serviceCollection) 
-            => serviceCollection.TryAddSingleton<TType, TImplementation>();
     }
 }

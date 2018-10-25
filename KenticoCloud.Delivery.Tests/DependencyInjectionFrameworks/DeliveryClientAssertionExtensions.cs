@@ -1,5 +1,7 @@
 ﻿using KenticoCloud.Delivery.CodeFirst;
 using KenticoCloud.Delivery.ContentLinks;
+using KenticoCloud.Delivery.InlineContentItems;
+using KenticoCloud.Delivery.ResiliencePolicy;
 using Xunit;
 
 namespace KenticoCloud.Delivery.Tests.DependencyInjectionFrameworks
@@ -14,17 +16,15 @@ namespace KenticoCloud.Delivery.Tests.DependencyInjectionFrameworks
         internal static void AssertDefaultDependenciesWithCustomCodeFirstModelProvider<TCustomCodeFirstModelProvider>(this DeliveryClient client)
             where TCustomCodeFirstModelProvider : ICodeFirstModelProvider
         {
-            Assert.NotNull(client);
-            Assert.NotNull(client.CodeFirstPropertyMapper);
-            Assert.NotNull(client.CodeFirstTypeProvider);
-            Assert.NotNull(client.ContentLinkUrlResolver);
-            Assert.NotNull(client.DeliveryOptions);
-            Assert.NotNull(client.CodeFirstModelProvider);
-            Assert.Equal(ProjectId, client.DeliveryOptions.ProjectId);
-
-            Assert.IsType<TCustomCodeFirstModelProvider>(client.CodeFirstModelProvider);
+            Assert.IsType<DeliveryClient>(client);
+            Assert.IsType<CodeFirstPropertyMapper>(client.CodeFirstPropertyMapper);
             Assert.IsType<DefaultTypeProvider>(client.CodeFirstTypeProvider);
             Assert.IsType<DefaultContentLinkUrlResolver>(client.ContentLinkUrlResolver);
+            Assert.IsType<InlineContentItemsProcessor>(client.InlineContentItemsProcessor);
+            Assert.IsType<DefaultResiliencePolicyProvider>(client.ResiliencePolicyProvider);
+            Assert.IsType<DeliveryOptions>(client.DeliveryOptions);
+            Assert.Equal(ProjectId, client.DeliveryOptions.ProjectId);
+            Assert.IsType<TCustomCodeFirstModelProvider>(client.CodeFirstModelProvider);
         }
     }
 }

@@ -10,36 +10,69 @@ namespace KenticoCloud.Delivery
 {
     public delegate DeliveryOptions BuildDeliveryOptions(IOptionsMandatorySteps builder);
 
-    public sealed class DeliveryClientBuilder : IDeliveryClientMandatorySteps, IDeliveryClientOptionalSteps
+    public sealed class DeliveryClientBuilder
     {
-        private static IDeliveryClientMandatorySteps MandatorySteps => new DeliveryClientBuilder();
-
         /// <summary>
         /// Mandatory step of the <see cref="DeliveryClientBuilder"/> for specifying Kentico Cloud project id.
         /// </summary>
         /// <param name="projectId">The identifier of the Kentico Cloud project.</param>
         public static IDeliveryClientOptionalSteps WithProjectId(string projectId)
-            => MandatorySteps.BuildWithProjectId(projectId);
+            => DeliveryClientBuilderImplementation.MandatorySteps.BuildWithProjectId(projectId);
 
         /// <summary>
         /// Mandatory step of the <see cref="DeliveryClientBuilder"/> for specifying Kentico Cloud project id.
         /// </summary>
         /// <param name="projectId">The identifier of the Kentico Cloud project.</param>
         public static IDeliveryClientOptionalSteps WithProjectId(Guid projectId)
-            => MandatorySteps.BuildWithProjectId(projectId);
+            => DeliveryClientBuilderImplementation.MandatorySteps.BuildWithProjectId(projectId);
 
         /// <summary>
         /// Mandatory step of the <see cref="DeliveryClientBuilder"/> for specifying Kentico Cloud project settings.
         /// </summary>
         /// <param name="buildDeliveryOptions">A function that returns <see cref="DeliveryOptions"/> instance which specifies the Kentico Cloud project settings.</param>
         public static IDeliveryClientOptionalSteps WithOptions(BuildDeliveryOptions buildDeliveryOptions)
-            => MandatorySteps.BuildWithDeliveryOptions(buildDeliveryOptions);
+            => DeliveryClientBuilderImplementation.MandatorySteps.BuildWithDeliveryOptions(buildDeliveryOptions);
+
+        /// <remarks>
+        /// To provide custom implementations of interfaces used in Kentico Cloud use <seealso cref="WithProjectId(string)"/>
+        /// </remarks>
+        /// <summary>
+        /// Creates implementation of the <see cref="IDeliveryClient"/> on which you can invoke methods for retrieving content and its metadata from the Kentico Cloud Delivery service.
+        /// </summary>
+        /// <param name="projectId">The identifier of the Kentico Cloud project.</param>
+        public static IDeliveryClient BuildWithProjectIdOnly(string projectId)
+            => DeliveryClientBuilderImplementation.MandatorySteps.BuildWithProjectIdOnly(projectId);
+
+        /// <remarks>
+        /// To provide custom implementations of interfaces used in Kentico Cloud use <seealso cref="WithProjectId(string)"/>
+        /// </remarks>
+        /// <summary>
+        /// Creates implementation of the <see cref="IDeliveryClient"/> on which you can invoke methods for retrieving content and its metadata from the Kentico Cloud Delivery service.
+        /// </summary>
+        /// <param name="projectId">The identifier of the Kentico Cloud project.</param>
+        public static IDeliveryClient BuildWithProjectIdOnly(Guid projectId)
+            => DeliveryClientBuilderImplementation.MandatorySteps.BuildWithProjectIdOnly(projectId);
+
+        /// <remarks>
+        /// To provide custom implementations of interfaces used in Kentico Cloud use <seealso cref="WithOptions"/>
+        /// </remarks>
+        /// <summary>
+        /// Creates implementation of the <see cref="IDeliveryClient"/> on which you can invoke methods for retrieving content and its metadata from the Kentico Cloud Delivery service.
+        /// </summary>
+        /// <param name="buildDeliveryOptions">A function that returns <see cref="DeliveryOptions"/> instance which specifies the Kentico Cloud project settings.</param>
+        public static IDeliveryClient BuildWithOptionsOnly(BuildDeliveryOptions buildDeliveryOptions)
+            => DeliveryClientBuilderImplementation.MandatorySteps.BuildWithDeliveryOptionsOnly(buildDeliveryOptions);
+    }
+
+    internal sealed class DeliveryClientBuilderImplementation : IDeliveryClientMandatorySteps, IDeliveryClientOptionalSteps
+    {
+        internal static IDeliveryClientMandatorySteps MandatorySteps => new DeliveryClientBuilderImplementation();
 
         private readonly IServiceCollection _serviceCollection;
         private HttpClient _httpClient;
         private DeliveryOptions _deliveryOptions;
 
-        private DeliveryClientBuilder()
+        private DeliveryClientBuilderImplementation()
         {
             _serviceCollection = new ServiceCollection();
         }
@@ -53,22 +86,34 @@ namespace KenticoCloud.Delivery
             return this;
         }
 
-        IDeliveryClientOptionalSteps IDeliveryClientMandatorySteps.BuildWithProjectId(string projectId)
+        public IDeliveryClientOptionalSteps BuildWithProjectId(string projectId)
             => BuildWithDeliveryOptions(builder => builder.WithProjectId(projectId).UseProductionApi.Build());
 
-        IDeliveryClientOptionalSteps IDeliveryClientMandatorySteps.BuildWithProjectId(Guid projectId)
+        public IDeliveryClientOptionalSteps BuildWithProjectId(Guid projectId)
             => BuildWithDeliveryOptions(builder => builder.WithProjectId(projectId).UseProductionApi.Build());
+
+        IDeliveryClient IDeliveryClientMandatorySteps.BuildWithProjectIdOnly(string projectId)
+            => BuildWithProjectId(projectId).Build();
+
+        IDeliveryClient IDeliveryClientMandatorySteps.BuildWithProjectIdOnly(Guid projectId)
+            => BuildWithProjectId(projectId).Build();
+
+        IDeliveryClient IDeliveryClientMandatorySteps.BuildWithDeliveryOptionsOnly(
+            BuildDeliveryOptions buildDeliveryOptions)
+            => BuildWithDeliveryOptions(buildDeliveryOptions).Build();
 
         IDeliveryClientOptionalSteps IDeliveryClientOptionalSteps.WithHttpClient(HttpClient httpClient)
         {
-            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient), "Http client is not specified");
+            _httpClient = httpClient ??
+                          throw new ArgumentNullException(nameof(httpClient), "Http client is not specified");
 
             _serviceCollection.AddSingleton(_httpClient);
 
             return this;
         }
 
-        IDeliveryClientOptionalSteps IDeliveryClientOptionalSteps.WithContentLinkUrlResolver(IContentLinkUrlResolver contentLinkUrlResolver)
+        IDeliveryClientOptionalSteps IDeliveryClientOptionalSteps.WithContentLinkUrlResolver(
+            IContentLinkUrlResolver contentLinkUrlResolver)
         {
             if (contentLinkUrlResolver == null)
             {
@@ -80,7 +125,8 @@ namespace KenticoCloud.Delivery
             return this;
         }
 
-        IDeliveryClientOptionalSteps IDeliveryClientOptionalSteps.WithInlineContentItemsProcessor(IInlineContentItemsProcessor inlineContentItemsProcessor)
+        IDeliveryClientOptionalSteps IDeliveryClientOptionalSteps.WithInlineContentItemsProcessor(
+            IInlineContentItemsProcessor inlineContentItemsProcessor)
         {
             if (inlineContentItemsProcessor == null)
             {
@@ -92,7 +138,8 @@ namespace KenticoCloud.Delivery
             return this;
         }
 
-        IDeliveryClientOptionalSteps IDeliveryClientOptionalSteps.WithCodeFirstModelProvider(ICodeFirstModelProvider codeFirstModelProvider)
+        IDeliveryClientOptionalSteps IDeliveryClientOptionalSteps.WithCodeFirstModelProvider(
+            ICodeFirstModelProvider codeFirstModelProvider)
         {
             if (codeFirstModelProvider == null)
             {
@@ -104,7 +151,8 @@ namespace KenticoCloud.Delivery
             return this;
         }
 
-        IDeliveryClientOptionalSteps IDeliveryClientOptionalSteps.WithCodeFirstTypeProvider(ICodeFirstTypeProvider codeFirstTypeProvider)
+        IDeliveryClientOptionalSteps IDeliveryClientOptionalSteps.WithCodeFirstTypeProvider(
+            ICodeFirstTypeProvider codeFirstTypeProvider)
         {
             if (codeFirstTypeProvider == null)
             {
@@ -116,7 +164,8 @@ namespace KenticoCloud.Delivery
             return this;
         }
 
-        IDeliveryClientOptionalSteps IDeliveryClientOptionalSteps.WithResiliencePolicyProvider(IResiliencePolicyProvider resiliencePolicyProvider)
+        IDeliveryClientOptionalSteps IDeliveryClientOptionalSteps.WithResiliencePolicyProvider(
+            IResiliencePolicyProvider resiliencePolicyProvider)
         {
             if (resiliencePolicyProvider == null)
             {
@@ -128,7 +177,8 @@ namespace KenticoCloud.Delivery
             return this;
         }
 
-        IDeliveryClientOptionalSteps IDeliveryClientOptionalSteps.WithCodeFirstPropertyMapper(ICodeFirstPropertyMapper propertyMapper)
+        IDeliveryClientOptionalSteps IDeliveryClientOptionalSteps.WithCodeFirstPropertyMapper(
+            ICodeFirstPropertyMapper propertyMapper)
         {
             if (propertyMapper == null)
             {

@@ -6,6 +6,7 @@ namespace KenticoCloud.Delivery.Tests.Builders.DeliveryOptions
     public class DeliveryOptionsValidatorTests
     {
         private readonly Guid _guid = Guid.NewGuid();
+        
         [Fact]
         public void ValidateOptionsWithNegativeMaxRetryAttempts()
         {
@@ -21,9 +22,57 @@ namespace KenticoCloud.Delivery.Tests.Builders.DeliveryOptions
         [Fact]
         public void ValidateOptionsWithEmptyProjectId()
         {
-            var deliveryOptions = new Delivery.DeliveryOptions();
+            var deliveryOptions = new Delivery.DeliveryOptions {ProjectId = ""};
+
+            Assert.Throws<ArgumentException>(() => deliveryOptions.Validate());
+        }
+
+        [Fact]
+        public void ValidateOptionsWithNullProjectId()
+        {
+            var deliveryOptions = new Delivery.DeliveryOptions { ProjectId = null };
 
             Assert.Throws<ArgumentNullException>(() => deliveryOptions.Validate());
+        }
+
+        [Theory]
+        [InlineData("123-456")]
+        [InlineData("00000000-0000-0000-0000-000000000000")]
+        public void ValidateOptionsWithEmptyGuidProjectId(string projectId)
+        {
+            var deliveryOptions = new Delivery.DeliveryOptions { ProjectId = projectId };
+
+            Assert.Throws<ArgumentException>(() => deliveryOptions.Validate());
+        }
+
+        [Fact]
+        public void ValidateOptionsWithNullPreviewApiKeys()
+        {
+            var deliveryOptionsStep = DeliveryOptionsBuilder
+                .CreateInstance()
+                .WithProjectId(_guid);
+
+            Assert.Throws<ArgumentNullException>(() => deliveryOptionsStep.UsePreviewApi(null));
+        }
+
+        [Fact]
+        public void ValidateOptionsWithNullSecuredApiKeys()
+        {
+            var deliveryOptionsStep = DeliveryOptionsBuilder
+                .CreateInstance()
+                .WithProjectId(_guid);
+
+            Assert.Throws<ArgumentNullException>(() => deliveryOptionsStep.UseSecuredProductionApi(null));
+        }
+
+        [Fact]
+        public void ValidateOptionsBuiltWithBuilderWithIncorrectApiKeyFormat()
+        {
+            var deliveryOptions = DeliveryOptionsBuilder
+                .CreateInstance()
+                .WithProjectId(_guid);
+
+            Assert.Throws<ArgumentException>(() => deliveryOptions.UsePreviewApi("badPreviewApiFormat"));
         }
 
         [Fact]
@@ -57,21 +106,36 @@ namespace KenticoCloud.Delivery.Tests.Builders.DeliveryOptions
         }
 
         [Fact]
-        public void ValidateOptionsBuiltWithBuilderWithIncorrectApiKeyFormat()
+        public void ValidateOptionsWithEnabledSecuredApiWithSetKey()
         {
-            var deliveryOptions = DeliveryOptionsBuilder
-                .CreateInstance()
-                .WithProjectId(_guid);
+            var deliveryOptions = new Delivery.DeliveryOptions
+            {
+                ProjectId = _guid.ToString(),
+                UseSecuredProductionApi = true
+            };
 
-            Assert.Throws<ArgumentException>(() => deliveryOptions.UsePreviewApi("badPreviewApiFormat"));
+            Assert.Throws<InvalidOperationException>(() => deliveryOptions.Validate());
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("ftp://abc.com")]
+        public void ValidateOptionsWithInvalidEndpointFormat(string endpoint)
+        {
+            var deliveryOptionsSteps = DeliveryOptionsBuilder
+                .CreateInstance()
+                .WithProjectId(_guid)
+                .UseProductionApi;
+
+            Assert.Throws<ArgumentException>(() => deliveryOptionsSteps.WithCustomEndpoint(endpoint));
         }
 
         [Fact]
         public void ValidateOptionsBuiltWithBuilderWithEmptyProjectId()
         {
-            var deliveryOptions = DeliveryOptionsBuilder.CreateInstance();
+            var deliveryOptionsSteps = DeliveryOptionsBuilder.CreateInstance();
 
-            Assert.Throws<ArgumentException>(() => deliveryOptions.WithProjectId(Guid.Empty));
+            Assert.Throws<ArgumentException>(() => deliveryOptionsSteps.WithProjectId(Guid.Empty));
         }
     }
 }

@@ -42,8 +42,8 @@ namespace KenticoCloud.Delivery.Tests
             Respond("application/json", File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "Fixtures\\DeliveryClient\\on_roasts.json")));
 
             var httpClient = _mockHttp.ToHttpClient();
-            var contentLinkUrlResolver = A.Fake<IContentLinkUrlResolver>();
-            var deliveryOptions = new OptionsWrapper<DeliveryOptions>(new DeliveryOptions { ProjectId = _guid });
+            var contentLinkUrlResolver = A.Fake<IContentLinkUrlResolver>();            
+            var deliveryOptions = Options.Create(new DeliveryOptions { ProjectId = _guid });
             var resiliencePolicyProvider = A.Fake<IResiliencePolicyProvider>();
             A.CallTo(() => resiliencePolicyProvider.Policy)
                 .Returns(Policy.HandleResult<HttpResponseMessage>(result => true).RetryAsync(deliveryOptions.Value.MaxRetryAttempts));

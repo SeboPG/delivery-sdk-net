@@ -65,7 +65,20 @@ namespace KenticoCloud.Delivery
             }
         }
 
-        internal static void IsEmptyOrNull(this string value, string parameterName)
+        internal static void ValidateCustomEndpoint(this string customEndpoint)
+        {
+            IsEmptyOrNull(customEndpoint, nameof(customEndpoint));
+
+            var canCreateUri = !Uri.TryCreate(customEndpoint, UriKind.Absolute, out var uriResult);
+            var hasCorrectUriScheme = uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps;
+
+            if (canCreateUri || hasCorrectUriScheme)
+            {
+                throw new ArgumentException(nameof(customEndpoint), $"Parameter {nameof(customEndpoint)} has invalid format.");
+            }
+        }
+
+        private static void IsEmptyOrNull(this string value, string parameterName)
         {
             if (value == null)
             {
@@ -78,7 +91,7 @@ namespace KenticoCloud.Delivery
             }
         }
 
-        internal static void IsKeySetForEnabledApi(DeliveryOptions deliveryOptions)
+        private static void IsKeySetForEnabledApi(DeliveryOptions deliveryOptions)
         {
             if (deliveryOptions.UsePreviewApi && string.IsNullOrEmpty(deliveryOptions.PreviewApiKey))
             {
@@ -91,24 +104,11 @@ namespace KenticoCloud.Delivery
             }
         }
 
-        internal static void ValidateUseOfPreviewAndProductionApi(this DeliveryOptions deliveryOptions)
+        private static void ValidateUseOfPreviewAndProductionApi(this DeliveryOptions deliveryOptions)
         {
             if (deliveryOptions.UsePreviewApi && deliveryOptions.UseSecuredProductionApi)
             {
                 throw new InvalidOperationException("Preview API and Secured Production API can't be used at the same time.");
-            }
-        }
-
-        internal static void ValidateCustomEndpoint(this string customEndpoint)
-        {
-            IsEmptyOrNull(customEndpoint, nameof(customEndpoint));
-
-            var canCreateUri = !Uri.TryCreate(customEndpoint, UriKind.Absolute, out var uriResult);
-            var hasCorrectUriScheme = uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps;
-
-            if (canCreateUri || hasCorrectUriScheme)
-            {
-                throw new ArgumentException(nameof(customEndpoint), $"Parameter {nameof(customEndpoint)} has invalid format.");
             }
         }
     }
