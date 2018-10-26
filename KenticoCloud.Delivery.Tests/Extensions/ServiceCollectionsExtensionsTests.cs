@@ -6,6 +6,7 @@ using System.Net.Http;
 using KenticoCloud.Delivery.InlineContentItems;
 using KenticoCloud.Delivery.ResiliencePolicy;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Xunit;
 
@@ -61,6 +62,18 @@ namespace KenticoCloud.Delivery.Tests.Extensions
                 builder.WithProjectId(ProjectId).UseProductionApi.Build());
 
             AssertServiceCollection();
+        }
+
+        [Fact]
+        public void AddDeliveryClientWithNullDeliveryOptions()
+        {
+            Assert.Throws<ArgumentNullException>(() => _fakeServiceCollection.AddDeliveryClient(deliveryOptions: null));
+        }
+
+        [Fact]
+        public void AddDeliveryClientWithNullBuildDeliveryOptions()
+        {
+            Assert.Throws<ArgumentNullException>(() => _fakeServiceCollection.AddDeliveryClient(buildDeliveryOptions: null));
         }
 
         [Theory]

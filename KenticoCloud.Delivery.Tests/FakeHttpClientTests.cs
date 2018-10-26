@@ -19,7 +19,7 @@ namespace KenticoCloud.Delivery.Tests
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When("https://deliver.kenticocloud.com/*").Respond("application/json", File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "Fixtures\\home.json")));
             var httpClient = mockHttp.ToHttpClient();
-            var deliveryOptions = new OptionsWrapper<DeliveryOptions>(new DeliveryOptions {ProjectId = Guid.NewGuid().ToString()});
+            var deliveryOptions = Options.Create(new DeliveryOptions {ProjectId = Guid.NewGuid().ToString()});
             var contentLinkUrlResolver = A.Fake<IContentLinkUrlResolver>();
             var codeFirstModelProvider = A.Fake<ICodeFirstModelProvider>();
             var resiliencePolicyProvider = A.Fake<IResiliencePolicyProvider>();

@@ -32,36 +32,6 @@ namespace KenticoCloud.Delivery
         /// <param name="buildDeliveryOptions">A function that returns <see cref="DeliveryOptions"/> instance which specifies the Kentico Cloud project settings.</param>
         public static IDeliveryClientOptionalSteps WithOptions(BuildDeliveryOptions buildDeliveryOptions)
             => DeliveryClientBuilderImplementation.MandatorySteps.BuildWithDeliveryOptions(buildDeliveryOptions);
-
-        /// <remarks>
-        /// To provide custom implementations of interfaces used in Kentico Cloud use <seealso cref="WithProjectId(string)"/>
-        /// </remarks>
-        /// <summary>
-        /// Creates implementation of the <see cref="IDeliveryClient"/> on which you can invoke methods for retrieving content and its metadata from the Kentico Cloud Delivery service.
-        /// </summary>
-        /// <param name="projectId">The identifier of the Kentico Cloud project.</param>
-        public static IDeliveryClient BuildWithProjectIdOnly(string projectId)
-            => DeliveryClientBuilderImplementation.MandatorySteps.BuildWithProjectIdOnly(projectId);
-
-        /// <remarks>
-        /// To provide custom implementations of interfaces used in Kentico Cloud use <seealso cref="WithProjectId(string)"/>
-        /// </remarks>
-        /// <summary>
-        /// Creates implementation of the <see cref="IDeliveryClient"/> on which you can invoke methods for retrieving content and its metadata from the Kentico Cloud Delivery service.
-        /// </summary>
-        /// <param name="projectId">The identifier of the Kentico Cloud project.</param>
-        public static IDeliveryClient BuildWithProjectIdOnly(Guid projectId)
-            => DeliveryClientBuilderImplementation.MandatorySteps.BuildWithProjectIdOnly(projectId);
-
-        /// <remarks>
-        /// To provide custom implementations of interfaces used in Kentico Cloud use <seealso cref="WithOptions"/>
-        /// </remarks>
-        /// <summary>
-        /// Creates implementation of the <see cref="IDeliveryClient"/> on which you can invoke methods for retrieving content and its metadata from the Kentico Cloud Delivery service.
-        /// </summary>
-        /// <param name="buildDeliveryOptions">A function that returns <see cref="DeliveryOptions"/> instance which specifies the Kentico Cloud project settings.</param>
-        public static IDeliveryClient BuildWithOptionsOnly(BuildDeliveryOptions buildDeliveryOptions)
-            => DeliveryClientBuilderImplementation.MandatorySteps.BuildWithDeliveryOptionsOnly(buildDeliveryOptions);
     }
 
     internal sealed class DeliveryClientBuilderImplementation : IDeliveryClientMandatorySteps, IDeliveryClientOptionalSteps
@@ -91,16 +61,6 @@ namespace KenticoCloud.Delivery
 
         public IDeliveryClientOptionalSteps BuildWithProjectId(Guid projectId)
             => BuildWithDeliveryOptions(builder => builder.WithProjectId(projectId).UseProductionApi.Build());
-
-        IDeliveryClient IDeliveryClientMandatorySteps.BuildWithProjectIdOnly(string projectId)
-            => BuildWithProjectId(projectId).Build();
-
-        IDeliveryClient IDeliveryClientMandatorySteps.BuildWithProjectIdOnly(Guid projectId)
-            => BuildWithProjectId(projectId).Build();
-
-        IDeliveryClient IDeliveryClientMandatorySteps.BuildWithDeliveryOptionsOnly(
-            BuildDeliveryOptions buildDeliveryOptions)
-            => BuildWithDeliveryOptions(buildDeliveryOptions).Build();
 
         IDeliveryClientOptionalSteps IDeliveryClientOptionalSteps.WithHttpClient(HttpClient httpClient)
         {

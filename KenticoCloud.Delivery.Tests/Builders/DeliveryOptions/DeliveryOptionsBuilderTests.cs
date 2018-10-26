@@ -73,6 +73,32 @@ namespace KenticoCloud.Delivery.Tests.Configuration
         }
 
         [Fact]
+        public void BuildWithWaitForLoadingNewContent()
+        {
+            var deliveryOptions = DeliveryOptionsBuilder
+                .CreateInstance()
+                .WithProjectId(Guid.NewGuid())
+                .UseProductionApi
+                .WaitForLoadingNewContent
+                .Build();
+
+            Assert.True(deliveryOptions.WaitForLoadingNewContent);
+        }
+
+        [Fact]
+        public void BuildWithEnabledResilienceLogic()
+        {
+            var deliveryOptions = DeliveryOptionsBuilder
+                .CreateInstance()
+                .WithProjectId(Guid.NewGuid())
+                .UseProductionApi
+                .EnableResilienceLogic
+                .Build();
+
+            Assert.True(deliveryOptions.EnableResilienceLogic);
+        }
+
+        [Fact]
         public void BuildWithCustomEndpointForPreviewApi()
         {
             const string customEndpoint = "http://www.customPreviewEndpoint.com";

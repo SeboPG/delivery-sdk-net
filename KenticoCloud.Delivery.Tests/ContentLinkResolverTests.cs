@@ -121,7 +121,7 @@ namespace KenticoCloud.Delivery.Tests
             mockHttp.When(url).
                Respond("application/json", File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "Fixtures\\ContentLinkResolver\\coffee_processing_techniques.json")));
 
-            var deliveryOptions = new OptionsWrapper<DeliveryOptions>(new DeliveryOptions { ProjectId = guid });
+            var deliveryOptions = Options.Create(new DeliveryOptions { ProjectId = guid });
             var httpClient = mockHttp.ToHttpClient();
             var resiliencePolicyProvider = new DefaultResiliencePolicyProvider(deliveryOptions);
             var contentLinkUrlResolver = new CustomContentLinkUrlResolver();

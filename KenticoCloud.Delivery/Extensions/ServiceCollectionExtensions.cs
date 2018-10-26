@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using KenticoCloud.Delivery.CodeFirst;
 using KenticoCloud.Delivery.ContentLinks;
 using KenticoCloud.Delivery.InlineContentItems;
@@ -19,9 +20,16 @@ namespace KenticoCloud.Delivery
         /// <param name="buildDeliveryOptions">A function that creates a <see cref="DeliveryOptions"/> instance.</param>
         /// <returns></returns>
         public static IServiceCollection AddDeliveryClient(this IServiceCollection services, BuildDeliveryOptions buildDeliveryOptions)
-            => services
+        {
+            if (buildDeliveryOptions == null)
+            {
+                throw new ArgumentNullException(nameof(buildDeliveryOptions), "The function for creating Delivery options is null.");
+            }
+
+            return services
                 .BuildOptions(buildDeliveryOptions)
                 .RegisterDependencies();
+        }
 
         /// <summary>
         /// Registers a DeliveryClient instance to an IDeliveryClient interface in <see cref="ServiceCollection"/>.
@@ -30,9 +38,16 @@ namespace KenticoCloud.Delivery
         /// <param name="deliveryOptions">A <see cref="DeliveryOptions"/> instance.</param>
         /// <returns></returns>
         public static IServiceCollection AddDeliveryClient(this IServiceCollection services, DeliveryOptions deliveryOptions)
-            => services
+        {
+            if (deliveryOptions == null)
+            {
+                throw new ArgumentNullException(nameof(deliveryOptions), "The Delivery options object is not specified.");
+            }
+
+            return services
                 .RegisterOptions(deliveryOptions)
                 .RegisterDependencies();
+        }
 
         /// <summary>
         /// Registers a DeliveryClient instance to an IDeliveryClient interface in <see cref="ServiceCollection"/>.
@@ -64,7 +79,7 @@ namespace KenticoCloud.Delivery
 
         private static IServiceCollection RegisterOptions(this IServiceCollection services, DeliveryOptions options)
         {
-            services.TryAddSingleton<IOptions<DeliveryOptions>>(new OptionsWrapper<DeliveryOptions>(options));
+            services.TryAddSingleton(Options.Create(options));
 
             return services;
         }
@@ -77,9 +92,6 @@ namespace KenticoCloud.Delivery
 
         private static IServiceCollection BuildOptions(this IServiceCollection services, BuildDeliveryOptions buildDeliveryOptions)
         {
-            if (buildDeliveryOptions == null)
-                return null;
-
             var builder = DeliveryOptionsBuilder.CreateInstance();
             var options = buildDeliveryOptions(builder);
 

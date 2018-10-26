@@ -17,31 +17,6 @@ namespace KenticoCloud.Delivery.Tests
         private readonly Guid _guid = new Guid(ProjectId);
 
         [Fact]
-        public void BuildWithProjectIdOnly_Guid_ReturnsDeliveryClientWithProjectIdSet()
-        {
-            var deliveryClient = (DeliveryClient) DeliveryClientBuilder.BuildWithProjectIdOnly(_guid);
-
-            Assert.Equal(_guid.ToString(), deliveryClient.DeliveryOptions.ProjectId);
-        }
-
-        [Fact]
-        public void BuildWithProjectIdOnly_String_ReturnsDeliveryClientWithProjectIdSet()
-        {
-            var deliveryClient = (DeliveryClient) DeliveryClientBuilder.BuildWithProjectIdOnly(_guid.ToString());
-
-            Assert.Equal(_guid.ToString(), deliveryClient.DeliveryOptions.ProjectId);
-        }
-
-        [Fact]
-        public void BuildWithDeliveryOptionsOnly_ReturnsDeliveryClientWithDeliveryOptions()
-        {
-            var deliveryClient = (DeliveryClient)DeliveryClientBuilder
-                .BuildWithOptionsOnly(builder => builder.WithProjectId(_guid).UseProductionApi.Build());
-
-            Assert.Equal(_guid.ToString(), deliveryClient.DeliveryOptions.ProjectId);
-        }
-
-        [Fact]
         public void BuildWithProjectId_ReturnsDeliveryClientWithProjectIdSet()
         {
             var deliveryClient = (DeliveryClient) DeliveryClientBuilder.WithProjectId(ProjectId).Build();

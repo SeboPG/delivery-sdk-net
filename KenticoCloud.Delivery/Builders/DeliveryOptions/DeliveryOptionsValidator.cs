@@ -5,8 +5,12 @@ namespace KenticoCloud.Delivery
 {
     public static class DeliveryOptionsValidator
     {
-        public static Lazy<Regex> ApiKeyRegex = new Lazy<Regex>(() => new Regex(@"[A-Za-z0-9+/]+\.[A-Za-z0-9+/]+\.[A-Za-z0-9+/]+", RegexOptions.Compiled));
+        internal static Lazy<Regex> ApiKeyRegex = new Lazy<Regex>(() => new Regex(@"[A-Za-z0-9+/]+\.[A-Za-z0-9+/]+\.[A-Za-z0-9+/]+", RegexOptions.Compiled));
 
+        /// <summary>
+        /// Validates the <see cref="DeliveryOptions"/> instance for correct configuration, i.e, project id format, non-negative number of retry attempts, use of either Preview or Production API and wether an API key is set if the API is used.
+        /// </summary>
+        /// <param name="deliveryOptions">A <see cref="DeliveryOptions"/> instance.</param>
         public static void Validate(this DeliveryOptions deliveryOptions)
         {
             ValidateMaxRetryAttempts(deliveryOptions.MaxRetryAttempts);
